@@ -11,6 +11,7 @@
         <f:event type="preRenderComponent" listener="#{viewDataControlBean.preLoadPage}" />
 
         <h:form id="viewDataFormId">
+            <p:sticky target="stickyPanelId"/>
 
             <h:panelGroup id="pollPanelId">
                 <p:poll interval="#{viewDataControlBean.remainingPollInterval}" 
@@ -19,87 +20,122 @@
                         rendered="#{viewDataBean.polling}" />
             </h:panelGroup>
 
-            <p:toolbar>
-                <f:facet name="left">
-                    Path: #{viewDataBean.selectedFile.absoluteFile}
-                </f:facet>
-                <f:facet name="right">
-                    <h:outputText value="Player: #{mediaFileUtil.getMediaPlayer(viewDataBean.selectedFile).toUpperCase()}"
-                                  rendered="#{mediaFileUtil.isMedia(viewDataBean.selectedFile)}"/>
-                </f:facet>
-            </p:toolbar>
-            <p:toolbar>
-                <f:facet name="left">
-<!--                        <p:commandButton action="#{viewDataControlBean.playFirstFile()}"
-                                     update="@form"
-                                     title="#{msg['caption.play.first']}"
-                                     icon="fa fa-fast-backward" />
-                    <p:spacer width="3px"/>-->
-                    <p:commandButton action="#{viewDataControlBean.playPreviousFile()}"
-                                     update="@form"
-                                     title="#{msg['caption.play.previous']}"
-                                     icon="fa fa-step-backward" />
-                    <p:spacer width="3px"/>
-                    <p:commandButton action="#{viewDataControlBean.playFile(viewDataBean.selectedFile)}"
-                                     update="@form"
-                                     title="#{msg['caption.play.replay']}"
-                                     icon="fa fa-play" />
-                    <p:spacer width="3px"/>
-                    <p:commandButton action="#{viewDataControlBean.playNextFile()}"
-                                     update="@form"
-                                     title="#{msg['caption.play.next']}"
-                                     icon="fa fa-step-forward" />
-                    <!--                        <p:spacer width="3px"/>
-                                            <p:commandButton action="#{viewDataControlBean.playLastFile()}"
-                                                             update="@form"
-                                                             title="#{msg['caption.play.last']}"
-                                                             icon="fa fa-fast-forward" />-->
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-                    <p:selectBooleanButton id="repeatButtonId"
-                                           value="#{viewDataBean.repeat}" 
-                                           onLabel="" offLabel="" 
-                                           onIcon="fa fa-repeat" offIcon="fa fa-repeat" 
-                                           style="height: 22px; vertical-align: bottom;"
-                                           styleClass="ui-button-icon-only">
-                        <p:ajax process="@this" 
-                                listener="#{viewDataControlBean.repeat()}"
-                                update="shuffleButtonId pollingButtonId @form:pollPanelId"/>
-                    </p:selectBooleanButton>
-                    <p:selectBooleanButton id="shuffleButtonId"
-                                           value="#{viewDataBean.shuffle}" 
-                                           onLabel="" offLabel="" 
-                                           onIcon="fa fa-random" offIcon="fa fa-random" 
-                                           style="height: 22px; vertical-align: bottom;"
-                                           styleClass="ui-button-icon-only">
-                        <p:ajax process="@this" 
-                                listener="#{viewDataControlBean.shuffle()}"
-                                update="repeatButtonId pollingButtonId @form:pollPanelId"/>
-                    </p:selectBooleanButton>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-                    <p:selectBooleanButton id="pollingButtonId"
-                                           value="#{viewDataBean.polling}" 
-                                           onLabel="" offLabel="" 
-                                           onIcon="fa fa-rss" offIcon="fa fa-rss" 
-                                           style="height: 22px; vertical-align: bottom;"
-                                           styleClass="ui-button-icon-only">
-                        <p:ajax process="@this" 
-                                listener="#{viewDataControlBean.polling()}"
-                                update="repeatButtonId shuffleButtonId @form:pollPanelId"/>
-                    </p:selectBooleanButton>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-                    <p:commandButton onclick="PF('playListDialog').show();"
-                                     update=":playListFormId"
-                                     title="#{msg['caption.play.playlist']}"
-                                     icon="fa fa-list" />
-                </f:facet>
-            </p:toolbar>
-            <h:panelGroup rendered="#{viewDataControlBean.fileId != null}">
+            <h:panelGroup id="stickyPanelId">
+                <p:toolbar>
+                    <f:facet name="left">
+                        Path: #{viewDataBean.selectedFile.absoluteFile}
+                    </f:facet>
+                    <f:facet name="right">
+                        <h:outputText value="Player: #{mediaFileUtil.getMediaPlayer(viewDataBean.selectedFile).toUpperCase()}"
+                                      rendered="#{mediaFileUtil.isMedia(viewDataBean.selectedFile)}"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:toolbar id="playerToolbarId">
+                    <f:facet name="left">
+    <!--                        <p:commandButton action="#{viewDataControlBean.playFirstFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.first']}"
+                                         icon="fa fa-fast-backward" />
+                        <p:spacer width="3px"/>-->
+                        <p:commandButton action="#{viewDataControlBean.playPreviousFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.previous']}"
+                                         icon="fa fa-step-backward" />
+                        <p:spacer width="3px"/>
+                        <p:commandButton action="#{viewDataControlBean.playFile(viewDataBean.selectedFile)}"
+                                         update="@form"
+                                         title="#{msg['caption.play.replay']}"
+                                         icon="fa fa-play" />
+                        <p:spacer width="3px"/>
+                        <p:commandButton action="#{viewDataControlBean.playNextFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.next']}"
+                                         icon="fa fa-step-forward" />
+                        <!--                        <p:spacer width="3px"/>
+                                                <p:commandButton action="#{viewDataControlBean.playLastFile()}"
+                                                                 update="@form"
+                                                                 title="#{msg['caption.play.last']}"
+                                                                 icon="fa fa-fast-forward" />-->
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:selectBooleanButton id="repeatButtonId"
+                                               value="#{viewDataBean.repeat}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-repeat" offIcon="fa fa-repeat" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.repeat()}"
+                                    update="shuffleButtonId pollingButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <p:selectBooleanButton id="shuffleButtonId"
+                                               value="#{viewDataBean.shuffle}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-random" offIcon="fa fa-random" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.shuffle()}"
+                                    update="repeatButtonId pollingButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:selectBooleanButton id="pollingButtonId"
+                                               value="#{viewDataBean.polling}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-rss" offIcon="fa fa-rss" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.polling()}"
+                                    update="repeatButtonId shuffleButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton onclick="PF('playListDialog').show();"
+                                         update=":playListFormId"
+                                         title="#{msg['caption.play.playlist']}"
+                                         icon="fa fa-list" />
+                    </f:facet>
+                    <f:facet name="right">
+                        <h:panelGrid id="sliderPanelId"
+                                     columns="4" 
+                                     columnClasses="alignLeft, alignLeft, alignLeft, alignRight"
+                                     style="width: 300px" 
+                                     styleClass="panelGrid-noBorder"
+                                     rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}">
+                            <h:outputLabel id="zoomLabelId" 
+                                           styleClass="label nowrap"
+                                           value="Zoom #{viewDataBean.relativeToActualSize}%" />
+                            <h:inputHidden id="relativeToActualSizeId" 
+                                           value="#{viewDataBean.relativeToActualSize}" />
+                            <p:slider for="relativeToActualSizeId"
+                                      display="zoomLabelId"
+                                      displayTemplate="Zoom {value}%"
+                                      minValue="#{msg['image.zoom.min']}"
+                                      maxValue="#{msg['image.zoom.max']}"
+                                      step="#{msg['image.zoom.step']}"
+                                      style="width: 300px;">
+                                <p:ajax event="slideEnd" 
+                                        process="@this relativeToActualSizeId"
+                                        listener="#{viewDataControlBean.zoomImage}"
+                                        update="graphicImageId" />
+                            </p:slider>
+                            <p:commandButton actionListener="#{viewDataBean.setRelativeToActualSize(0)}"
+                                             action="#{viewDataControlBean.zoomImage}"
+                                             title="#{msg['caption.image.zoom.reset']}"
+                                             process="@this"
+                                             update="sliderPanelId graphicImageId"
+                                             icon="fa fa-refresh"/>
+                        </h:panelGrid>
+                    </f:facet>
+                </p:toolbar>
+            </h:panelGroup>
+
+            <h:panelGroup>
                 <p:panelGrid columns="3">
                     <h:outputLabel value="#{msg['caption.file.name']}" styleClass="label"/>
                     <h:outputLabel value="#{msg['caption.file.size']}" styleClass="label"/>
@@ -154,11 +190,12 @@
 
                 <p:separator />
 
-                <p:graphicImage value="#{contentStreamer.streamedContent}"
-                                rendered="#{mediaFileUtil.isImagePath(viewDataControlBean.fileId)}"
-                                alt="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
-                                title="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
-                                width="#{viewDataBean.fileMaxWidth}" height="#{viewDataBean.fileMaxHeight}">
+                <p:graphicImage id="graphicImageId"
+                                value="#{contentStreamer.streamedContent}"
+                                rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}"
+                                title="#{viewDataBean.fileWidth} x #{viewDataBean.fileHeight}"
+                                width="#{viewDataBean.fileWidth}" 
+                                height="#{viewDataBean.fileHeight}">
                     <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
                 </p:graphicImage>
 

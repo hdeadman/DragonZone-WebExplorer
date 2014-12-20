@@ -12,19 +12,18 @@ import javax.faces.bean.ViewScoped;
 @ViewScoped
 public class ViewDataBean implements Serializable {
     private static final long serialVersionUID = 914970822058171434L;
-    protected static final int MAX_WIDTH = 800;
-    protected static final int MAX_HEIGHT = 600;
     private List<File> fileList;
     private File selectedFile;
     private Mp3Meta selectedMp3Meta;
-    private int fileMaxWidth;
-    private int fileMaxHeight;
+    private int fileWidth;
+    private int fileHeight;
     private int fileActualWidth;
     private int fileActualHeight;
     private boolean shuffle;
     private boolean repeat;
     private boolean polling;
     private Date lastLoaded;
+    private int relativeToActualSize;
 
     /**
      * @return the selectedFile
@@ -55,31 +54,31 @@ public class ViewDataBean implements Serializable {
     }
     
     /**
-     * @return the fileMaxWidth
+     * @return the fileWidth
      */
-    public int getFileMaxWidth() {
-        return fileMaxWidth;
+    public int getFileWidth() {
+        return fileWidth;
     }
 
     /**
-     * @param fileMaxWidth the fileMaxWidth to set
+     * @param fileWidth the fileWidth to set
      */
-    public void setFileMaxWidth(int fileMaxWidth) {
-        this.fileMaxWidth = fileMaxWidth;
+    public void setFileWidth(int fileWidth) {
+        this.fileWidth = fileWidth;
     }
 
     /**
-     * @return the fileMaxHeight
+     * @return the fileHeight
      */
-    public int getFileMaxHeight() {
-        return fileMaxHeight;
+    public int getFileHeight() {
+        return fileHeight;
     }
 
     /**
-     * @param fileMaxHeight the fileMaxHeight to set
+     * @param fileHeight the fileHeight to set
      */
-    public void setFileMaxHeight(int fileMaxHeight) {
-        this.fileMaxHeight = fileMaxHeight;
+    public void setFileHeight(int fileHeight) {
+        this.fileHeight = fileHeight;
     }
 
     /**
@@ -178,5 +177,19 @@ public class ViewDataBean implements Serializable {
      */
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
+    }
+
+    /**
+     * @return the relativeToActualSize
+     */
+    public int getRelativeToActualSize() {
+        return relativeToActualSize;
+    }
+
+    /**
+     * @param relativeToActualSize the relativeToActualSize to set
+     */
+    public void setRelativeToActualSize(int relativeToActualSize) {
+        this.relativeToActualSize = relativeToActualSize;
     }
 }

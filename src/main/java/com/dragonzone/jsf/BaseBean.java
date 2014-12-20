@@ -8,15 +8,19 @@ import com.dragonzone.security.AESEncryption;
 import com.dragonzone.spring.AppProperties;
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
+import net.sf.uadetector.ReadableUserAgent;
+import net.sf.uadetector.UserAgentStringParser;
+import net.sf.uadetector.service.UADetectorServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseBean {
+    final static Logger logger = LoggerFactory.getLogger(BaseBean.class);
 
     public static final String ENCODING_SCHEME = "UTF-8";
     @ManagedProperty("#{securityBean}")
@@ -41,13 +45,12 @@ public abstract class BaseBean {
                     .append(errorMessage == null ? "" : URLEncoder.encode(errorMessage, ENCODING_SCHEME))
                     .append("&errorSummary=")
                     .append(errorSummary == null ? "" : URLEncoder.encode(errorSummary, ENCODING_SCHEME));
- 
+
             getFacesContext().getExternalContext().redirect(
                     getFacesContext().getExternalContext().getRequestContextPath()
                     + sbNav.toString());
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error redirecting to display error with \nerror message: " 
+            logger.error("Error redirecting to display error with \nerror message: "
                     + errorMessage + "\nerror summary: " + errorSummary, e);
         }
     }
@@ -57,8 +60,7 @@ public abstract class BaseBean {
             getFacesContext().getExternalContext().redirect(
                     getFacesContext().getExternalContext().getRequestContextPath() + url);
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Cannot redirect url: " + url, e);
+            logger.error("Cannot redirect url: " + url, e);
         }
     }
 
@@ -68,8 +70,9 @@ public abstract class BaseBean {
 
     /**
      * This should is used when doing a redirect to handle encoding issues
+     *
      * @param message
-     * @return 
+     * @return
      */
     public String encryptAndEncode(String message) {
         return encryptAndEncode(message, getSecurityBean().getLoginUser());
@@ -82,8 +85,7 @@ public abstract class BaseBean {
             // encrypted message has special characters that will be unescaped, so needs to encode it
             encodedMesg = URLEncoder.encode(encryptedMesg, ENCODING_SCHEME);
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error encryptAndEncode message: " + message + " with key: " + key, e);
+            logger.error("Error encryptAndEncode message: " + message + " with key: " + key, e);
             redirectFatalErrors("Encrypting Error", "Error trying to encrypt message: " + e.getMessage());
         }
 
@@ -99,8 +101,7 @@ public abstract class BaseBean {
         try {
             encryptedMesg = AESEncryption.encrypt(message, key);
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error encrypting message: " + message + " with key: " + key, e);
+            logger.error("Error encrypting message: " + message + " with key: " + key, e);
             redirectFatalErrors("Encrypting Error", "Error trying to encrypt message: " + e.getMessage());
         }
 
@@ -116,16 +117,38 @@ public abstract class BaseBean {
         try {
             decryptedMesg = AESEncryption.decrypt(message, key);
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error decrypting message: " + message + " with key: " + key, e);
+            logger.error("Error decrypting message: " + message + " with key: " + key, e);
             redirectFatalErrors("Decrypting Error", "Error trying to decrypt message: " + e.getMessage());
         }
 
         return decryptedMesg;
     }
-    
+
     public Mp3Meta getMp3Meta(File file) {
         return Mp3Util.getMp3Meta(file.getAbsolutePath());
+    }
+
+    public ReadableUserAgent getReadableUserAgent() {
+        UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
+        return parser.parse(((HttpServletRequest) getFacesContext().getExternalContext().getRequest()).getHeader("User-Agent"));
+    }
+
+    /**
+     * http://forum.primefaces.org/viewtopic.php?f=3&t=33498
+     *
+     * @return true if browser support sticky
+     */
+    public boolean isSupportSticky() {
+        boolean useSticky = false;
+        switch (getReadableUserAgent().getName().toLowerCase()) {
+            case "firefox":
+            case "chrome":
+                useSticky = true;
+                break;
+            default:
+                break;
+        }
+        return useSticky;
     }
 
     /**
